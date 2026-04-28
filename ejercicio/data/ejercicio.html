@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Instituciones Educativas - GitHub Data</title>
+    
+    <link rel="stylesheet" href="./jquery-ui.css">
+    <script src="./jquery-3.5.0.js"></script>
+    <script src="./jquery-ui.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 30px; background-color: #f0f2f5; }
+        .container { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #1a73e8; border-bottom: 2px solid #1a73e8; padding-bottom: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 0.9em; }
+        th { background-color: #1a73e8; color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #ddd; }
+        tr:hover { background-color: #f1f8ff; }
+        
+        .btn-cargar { 
+            background-color: #1a73e8; color: white; border: none; padding: 10px 20px; 
+            border-radius: 5px; cursor: pointer; font-weight: bold; 
+        }
+        .btn-cargar:hover { background-color: #1557b0; }
+        
+        #mensaje { margin: 15px 0; font-weight: bold; color: #555; }
+        .tag { padding: 4px 8px; border-radius: 4px; font-size: 0.8em; color: white; text-transform: capitalize; }
+        .fiscal { background-color: #28a745; }
+        .particular { background-color: #ffc107; color: #333; }
+        .fiscomisional { background-color: #17a2b8; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Instituciones - La Concordia (GitHub Data)</h2>
+    <button id="btnCargar" class="btn-cargar">Obtener Datos Externos</button>
+    <div id="mensaje">Presione el botón para cargar los datos.</div>
+
+    <table id="tablaDatos" style="display:none;">
+        <thead>
+            <tr>
+                <th>AMIE</th>
+                <th>Institución Educativa</th>
+                <th>Parroquia</th>
+                <th>Sostenimiento</th>
+                <th>Nivel</th>
+                <th>Estudiantes</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpoTabla"></tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $("#btnCargar").on("click", function() {
+            // Nueva URL de GitHub Raw
+            const url = "https://raw.githubusercontent.com/taw-desarrollo-plataformas-web/oers/refs/heads/main/data_instituciones.json";
+            
+            $("#mensaje").text("Conectando con GitHub y descargando datos...");
+            $("#btnCargar").prop("disabled", true).text("Cargando...");
+
+            $.getJSON(url, function(data) {
+                $("#cuerpoTabla").empty();
+                
+                $.each(data, function(i, item) {
+                    // Limpieza simple del nombre de la clase CSS para el tag
+                    let sostenimiento = item.Sostenimiento || "Desconocido";
+                    let claseSost = sostenimiento.toLowerCase();
+                    
+                    let fila = `<tr>
+                        <td>${item.AMIE}</td>
+                        <td><strong>${item["Nombre-Educativa"]}</strong></td>
+                        <td>${item.Parroquia}</td>
+                        <td><span class="tag ${claseSost}">${sostenimiento}</span></td>
+                        <td>${item.Nivel}</td>
+                        <td>${item.Numeroestudiantes}</td>
+                    </tr>`;
+                    
+                    $("#cuerpoTabla").append(fila);
+                });
+
+                $("#tablaDatos").fadeIn();
+                $("#mensaje").text("Se han cargado " + data.length + " registros exitosamente.");
+                $("#btnCargar").prop("disabled", false).text("Actualizar Datos");
+            })
+            .fail(function(jqxhr, textStatus, error) {
+                let err = textStatus + ", " + error;
+                console.log("Request Failed: " + err);
+                $("#mensaje").html("<span style='color:red;'>Error al obtener datos: " + error + "</span>");
+                $("#btnCargar").prop("disabled", false).text("Reintentar");
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
