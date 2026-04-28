@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo Jquery y JqueryUI</title>
+    
+    <link rel="stylesheet" href="./jquery-ui.css">
+    <script src="./jquery-3.5.0.js"></script>
+    <script src="./jquery-ui.js"></script>
+  </head>
+  <body>
+      <h2>Ejemplo de Uso de jQuery y jQueryUI</h2>
+      
+      <div id="accordion">
+        <h3>Sección 1</h3>
+        <div>
+          <p id="nombreCarrera">Tecnologías de la Información</p>
+          <p id="nombreUniversidad">Universidad Técnica Particular de Loja</p>
+          <button type="button" id="btnGenerar">Generar Mensaje</button>
+        </div>
+        <h3>Sección 2</h3>
+        <div>
+          <p id="mensajeFinal"></p>
+        </div>
+        <h3>Sección 3</h3>
+        <div>
+          <p id="mensajeFinal2"></p>
+        </div>
+        <h3>Sección 4</h3>
+        <div>
+          <p id="mensajeFinal3"></p>
+        </div>
+      </div>
+
+      <script>
+        $(document).ready(function() {
+          // Inicializar acordeón
+          $("#accordion").accordion({
+              collapsible: true,
+              heightStyle: "content"
+          });
+
+          // Evento click
+          $( "#btnGenerar" ).on("click", function() {
+            var texto1 = $('#nombreCarrera').text();
+            var texto2 = $('#nombreUniversidad').text();
+            var mensaje = "Su carrera es: " + texto1 + ". Su universidad es " + texto2;
+            
+            $('#mensajeFinal').text(mensaje);
+            $('#mensajeFinal2').text(mensaje);
+            $('#mensajeFinal3').text(mensaje);
+            
+            console.log("Mensaje generado con éxito");
+          });
+        });
+      </script>
+  </body>
+</html>
